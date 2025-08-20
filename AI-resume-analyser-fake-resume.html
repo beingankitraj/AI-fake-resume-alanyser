@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Resume Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .analysis-card { transition: all 0.3s ease; }
+        .analysis-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .progress-bar { transition: width 0.8s ease-in-out; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white py-8">
+        <div class="max-w-6xl mx-auto px-6">
+            <h1 class="text-4xl font-bold mb-2">🤖 AI Resume Analyzer</h1>
+            <p class="text-xl opacity-90">Advanced detection for fake resumes and AI-generated content</p>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Upload Section -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Upload Resume for Analysis</h2>
+            
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer" id="uploadArea">
+                <div class="mb-4">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <p class="text-lg text-gray-600 mb-2">Drop your resume here or click to browse</p>
+                <p class="text-sm text-gray-500">Supports PDF, DOC, DOCX files up to 10MB</p>
+                <input type="file" id="fileInput" class="hidden" accept=".pdf,.doc,.docx">
+            </div>
+
+            <div class="mt-6 flex justify-center">
+                <button id="analyzeBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    🔍 Analyze Resume
+                </button>
+            </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="resultsSection" class="hidden">
+            <!-- Overall Score -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Analysis Results</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="authenticityScore">92%</div>
+                        <div class="text-gray-600">Authenticity Score</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-green-500 h-2 rounded-full progress-bar" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="humanScore">88%</div>
+                        <div class="text-gray-600">Human-Written Score</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: 88%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="qualityScore">95%</div>
+                        <div class="text-gray-600">Overall Quality</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-purple-500 h-2 rounded-full progress-bar" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis -->
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Authenticity Analysis -->
+                <div class="bg-white rounded-xl shadow-lg p-6 analysis-card">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                        🛡️ Authenticity Analysis
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                            <span class="text-gray-700">Employment History Verification</span>
+                            <span class="text-green-600 font-semibold">✓ Verified</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                            <span class="text-gray-700">Education Credentials</span>
+                            <span class="text-green-600 font-semibold">✓ Valid</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                            <span class="text-gray-700">Skills Assessment</span>
+                            <span class="text-yellow-600 font-semibold">⚠ Needs Review</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                            <span class="text-gray-700">Contact Information</span>
+                            <span class="text-green-600 font-semibold">✓ Legitimate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Detection Analysis -->
+                <div class="bg-white rounded-xl shadow-lg p-6 analysis-card">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                        🤖 AI Detection Analysis
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Writing Pattern Analysis</span>
+                                <span class="text-blue-600 font-semibold">12% AI-like</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 12%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Language Authenticity</span>
+                                <span class="text-green-600 font-semibold">94% Human</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 94%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-yellow-50 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium text-gray-700">Content Originality</span>
+                                <span class="text-yellow-600 font-semibold">78% Original</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Findings -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mt-8">
+                <h3 class="text-xl font-semibold mb-6 text-gray-800">🔍 Detailed Findings</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-green-600 mb-3">✅ Positive Indicators</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Consistent employment timeline with no suspicious gaps
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Natural language flow and personal writing style
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Verifiable contact information and references
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Realistic skill progression over time
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-yellow-600 mb-3">⚠️ Areas of Concern</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-yellow-500 mr-2">•</span>
+                                Some achievements appear overly optimized
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-500 mr-2">•</span>
+                                Minor inconsistencies in formatting style
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-500 mr-2">•</span>
+                                Certain phrases match common AI patterns
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mt-8">
+                <h3 class="text-xl font-semibold mb-6 text-gray-800">💡 Recommendations</h3>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-r-lg">
+                    <h4 class="font-semibold text-blue-800 mb-3">Overall Assessment</h4>
+                    <p class="text-blue-700 mb-4">
+                        This resume shows strong indicators of authenticity with minimal AI involvement. The candidate appears genuine with verifiable background information.
+                    </p>
+                    <div class="space-y-2">
+                        <p class="text-blue-700"><strong>Recommendation:</strong> Proceed with interview process</p>
+                        <p class="text-blue-700"><strong>Follow-up:</strong> Verify specific achievements mentioned in experience section</p>
+                        <p class="text-blue-700"><strong>Risk Level:</strong> <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Low</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Animation -->
+        <div id="loadingSection" class="hidden bg-white rounded-xl shadow-lg p-8 text-center">
+            <div class="pulse-animation mb-4">
+                <div class="inline-block w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Analyzing Resume...</h3>
+            <p class="text-gray-600">Running AI detection algorithms and authenticity checks</p>
+            <div class="mt-4 max-w-md mx-auto">
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>Progress</span>
+                    <span id="progressText">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        let selectedFile = null;
+
+        // File upload handling
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-blue-400', 'bg-blue-50');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-blue-400', 'bg-blue-50');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a PDF, DOC, or DOCX file.');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB.');
+                return;
+            }
+
+            selectedFile = file;
+            uploadArea.innerHTML = `
+                <div class="text-center">
+                    <div class="text-green-600 mb-2">
+                        <svg class="mx-auto h-12 w-12" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <p class="text-lg font-medium text-gray-800">${file.name}</p>
+                    <p class="text-sm text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    <button class="mt-2 text-blue-600 hover:text-blue-800 text-sm underline" onclick="clearFile()">Choose different file</button>
+                </div>
+            `;
+            analyzeBtn.disabled = false;
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            analyzeBtn.disabled = true;
+            uploadArea.innerHTML = `
+                <div class="mb-4">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <p class="text-lg text-gray-600 mb-2">Drop your resume here or click to browse</p>
+                <p class="text-sm text-gray-500">Supports PDF, DOC, DOCX files up to 10MB</p>
+            `;
+        }
+
+        // Analysis simulation
+        analyzeBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
+            
+            loadingSection.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                progressText.textContent = Math.round(progress) + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingSection.classList.add('hidden');
+                        resultsSection.classList.remove('hidden');
+                        generateRandomResults();
+                    }, 1000);
+                }
+            }, 200);
+        });
+
+        function generateRandomResults() {
+            // Generate realistic random scores
+            const authenticity = Math.floor(Math.random() * 20) + 80;
+            const humanScore = Math.floor(Math.random() * 25) + 75;
+            const quality = Math.floor(Math.random() * 15) + 85;
+            
+            document.getElementById('authenticityScore').textContent = authenticity + '%';
+            document.getElementById('humanScore').textContent = humanScore + '%';
+            document.getElementById('qualityScore').textContent = quality + '%';
+            
+            // Update progress bars with animation
+            setTimeout(() => {
+                document.querySelectorAll('.progress-bar')[0].style.width = authenticity + '%';
+                document.querySelectorAll('.progress-bar')[1].style.width = humanScore + '%';
+                document.querySelectorAll('.progress-bar')[2].style.width = quality + '%';
+            }, 500);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'970d8d89b5803fb5',t:'MTc1NTQ3OTY1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
